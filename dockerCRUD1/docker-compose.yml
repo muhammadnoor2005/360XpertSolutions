@@ -1,0 +1,53 @@
+# version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  nodeapp:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # -  .:/app
+      # - /app/node_modules
+
+      - /app/node_modules           # preserve generated prisma client
+      - ./prisma:/app/prisma     # mount just the schema folder
+      - ./routes:/app/routes
+      - ./server.js:/app/server.js
+      - ./prisma.js:/app/prisma.js
+      - .env:/app/.env
+
+    depends_on:
+      - postgres
+    environment:
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - DB_PORT=5432
+      - DB_HOST=postgres
+      - DB_NAME=testdb
+      - NODE_PATH=/app/node_modules
+    # command: sh -c "npx prisma generate && npm run dev"
+    # command: sh -c "cd /app && npx prisma generate && npm run dev"
+    command: sh -c "npx prisma generate --schema=./prisma/schema.prisma && npm run dev"
+
+volumes:
+  postgres_data:
+
+
