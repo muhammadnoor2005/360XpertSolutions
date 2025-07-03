@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="chat-main-div">
+        <div class="users-div">
+            <h3>Users</h3>
+            <p id="users"></p>
+        </div>
+
+        <div class="chat-area">
+            <h3 id="room-name"></h3>
+
+            <div class="chat-messages"></div>
+
+            <form id="chat-form">
+                <input type="text" id="msg" placeholder="Type something...">
+                <button class="btn"><i class="bi bi-send"></i></button>
+            </form>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.2/qs.min.js" integrity="sha512-vCegEXqPUYpZsTGz2lk0jaQ1psxtFeniVJACAXhMVxuoYa/N4nZkjoVFOxLwP7uGeQOoemiz7DQrIpRTj4IBPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/main.js"></script>
+    </div>
+
+</body>
+</html>

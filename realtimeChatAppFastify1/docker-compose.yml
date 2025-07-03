@@ -1,0 +1,138 @@
+# version: '3.8'
+
+# services:
+#   postgres:
+#     image: postgres:latest
+#     environment:
+#       POSTGRES_USER: admin
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: testdb
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U admin -d testdb"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+#   adminer:
+#     image: adminer:latest
+#     ports:
+#       - "8080:8080"
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+
+#   nodeapp:
+#     build: .
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - ./src:/app/src
+#       - ./prisma:/app/prisma
+#       - ./.env:/app/.env
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     environment:
+#       - DATABASE_URL=postgresql://admin:password@postgres:5432/testdb?schema=public
+# #       - NODE_ENV=development
+# #     command: sh -c "npx prisma generate && npx prisma migrate dev --name init && npm run dev"
+# #     restart: unless-stopped
+
+# # volumes:
+# #   postgres_data:
+
+
+
+# version: '3.8'
+
+# services:
+#   postgres:
+#     image: postgres:latest
+#     container_name: postgres
+#     environment:
+#       POSTGRES_USER: admin
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: testdb
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U admin -d testdb"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+#   adminer:
+#     image: adminer:latest
+#     container_name: adminer
+#     ports:
+#       - "8080:8080"
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+
+#   nodeapp:
+#     build: .
+#     container_name: fastify-app
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - ./src:/app/src
+#       - ./prisma:/app/prisma
+#       - ./.env:/app/.env
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     environment:
+#       DATABASE_URL: postgresql://admin:password@postgres:5432/testdb?schema=public
+#       NODE_ENV: development
+#     command: sh -c "npx prisma generate && npx prisma migrate dev --name init && npm run dev"
+#     restart: unless-stopped
+
+# volumes:
+#   postgres_data:
+
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  nodeapp:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://admin:password@postgres:5432/testdb?schema=public
+    command: sh -c "npm install --unsafe-perm && npx prisma generate && npm run dev"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
